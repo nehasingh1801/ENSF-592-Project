@@ -22,7 +22,11 @@ class GuiFrame():
     GuiFrame implements the main frame of the Gui.
     '''
     global db_manager
+    global yr
+    global tp
     db_manager = DbManagerNew()
+    yr = 0
+    tp = ""
 
     # map_event is called when the sort button is presses
     def map_event(self, event):
@@ -32,21 +36,21 @@ class GuiFrame():
     def comboFunc(self,event):
         global tp
         if comboType.get() == "Accident":
-            type = "traffic_incidents"
+            tp = "traffic_incidents"
         elif comboType.get() == "Traffic Volume":
-            type = "traffic_volume"
-        tp = type
+            tp = "traffic_volume"
+        #tp = type
 
     # comboFunc is called when the user adds the value
     def comboFuncYr(self, event):
-        global yr
+        global yr 
         if (comboYear.get()) == "2016":
-            year = "2016"
+            yr = "2016"
         elif (comboYear.get()) == "2017":
-            year = "2017"
+            yr = "2017"
         else:
-            year = "2018"
-        yr = year
+            yr = "2018"
+        #yr = year
 
     def drawFrame(self, window):
 
@@ -76,7 +80,7 @@ class GuiFrame():
         comboYear.current(0)
 
         # adding button for reading the data
-        readButton = tk.Button(fr_buttons, text='Read', bg='white')
+        readButton = tk.Button(fr_buttons, text='Read', bg='white', activebackground='red')
         readButton.grid(row=3, column=0, sticky='ew', padx=5, pady=5)
 
         # adding button for sorting the data
@@ -109,10 +113,10 @@ class GuiFrame():
 
         readButton.bind("<Button-1>", lambda event: read_data.read(event, win = window, text = statusText,
                                                                        year = yr, type = tp, obj = db_manager))
-        # sortButton.bind("<Button-1>", lambda event: sort_data.sort(event, win = window,
-        #                                                                year = yr, type = tp))
+        sortButton.bind("<Button-1>", lambda event: sort_data.sort(event, win = window, text = statusText,
+                                                                       year = yr, type = tp, obj = db_manager))
         mapButton.bind("<Button-1>", lambda event: draw_map.draw(event, year = yr, type = tp,
-                                                                 text = statusText, win = window))
+                                                                 text = statusText, win = window, obj = db_manager))
 
         analyseButton.bind("<Button-1>", lambda event: draw_graph.draw(event,  win = window,
                                                                        text = statusText,  type = tp, obj = db_manager))
