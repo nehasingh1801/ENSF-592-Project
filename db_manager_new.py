@@ -1,22 +1,32 @@
+'''
+@author(s) Neha Singh, Sanyam, Taruneesh Sachdeva
+
+This .py file has a class DbManagerNew which has a constructor for establishing the connection to 
+the MongoDB database. The class has several functions which we'll use to read,sort,analyse and map the 
+required data.
+'''
+
+#Importing the required packages
 import pymongo
 import csv
 
 class DbManagerNew():
     
+    #Constructor
     def __init__(self):
-        # if db_client is None:
-        #     client = pymongo.MongoClient("mongodb+srv://db_user1:lX7UMVmXXoypDNPK@cluster0.wzbtd.mongodb.net/admin?retryWrites=true&w=majority")
-        #     self.db_client = client["calgary_traffic"]
-        # else:
-        #     self.db_client = db_client
-        #self.db = db
         client = pymongo.MongoClient("mongodb+srv://db_user1:lX7UMVmXXoypDNPK@cluster0.wzbtd.mongodb.net/admin?retryWrites=true&w=majority")
         global db
         db = client["calgary_traffic"]
-
-
+        
+    '''
+    ret_data() method takes in two parameters: collection_type and year. An empty list response is
+    appended as the if-elif conditions are checked for three years 2016,2017 and 2018.
+    It reads the data from the database and displays 10 rows pertaining to it. It returns the 
+    response[] list.
+    '''
     def ret_data(self,collection_type,year):
         response = []
+        #If the collection type selected by the user in the GUI is traffic volume.
         if(collection_type == "traffic_volume"):
             if(year == "2016"):
                 print("2016")
@@ -33,16 +43,24 @@ class DbManagerNew():
                 for x in db.traffic_volume.find( { "YEAR": "2018" } ):
                     response.append(x)
 
+        #If the collection type selected by the user in the GUI is traffic incidents.
         elif(collection_type == "traffic_incidents"):
             print("inside trff inc")
             for x in db.traffic_incidents.find( { "MODIFIED_DT": {'$regex': year}} ):
                 response.append(x)
                 print("inside trff inc find")
         
+        #returns 10 rows
         return response[0:10]
 
+    '''
+    sort_data() method is defined for sorting the data after reading it from the database.
+    Depending on which year and collection type user selected, it'll return the response list 
+    with 15 rows and sorting the data in descending order i.e. highest -> lowest
+    '''
     def sort_data(self,collection_type,year):
         response = []
+        #If the collection type selected by the user in the GUI is traffic volume.
         if(collection_type == "traffic_volume"):
             if(year == "2016"):
                 for x in db.traffic_volume.find({"year_vol": "2016" }).sort([("volume", -1)]).collation({"locale": "en_US", "numericOrdering": True}):
@@ -56,6 +74,7 @@ class DbManagerNew():
                 for x in db.traffic_volume.find({"YEAR": "2018" }).sort([("VOLUME", -1)]).collation({"locale": "en_US", "numericOrdering": True}):
                     response.append(x)
 
+        #If the collection type selected by the user in the GUI is traffic incidents.
         if(collection_type == "traffic_incidents"):
             res = []
             new_res = []
@@ -64,33 +83,35 @@ class DbManagerNew():
                 #res.append(list(x.values())[1])
                 res.append(x)
 
+            #sorts the data in descending order
             new_res = sorted(res, key = lambda i: i['count'], reverse=True)
             num = 0
-            #print(new_res)
             for i in new_res:
                 if(num == 10):
                     break
                 key = list(i.values())[0]
                 num +=1
-                #print("in new_res for")
-                #print(key)
                 for x in db.traffic_incidents.find({"INCIDENT INFO": key ,"MODIFIED_DT": {'$regex': str(year)} }):
                     response.append(x)
 
+        #returns the response list sliced to 15 rows
         return response[0:15]
 
-
+    '''
+    data_analysis() method accepts collection_type as a parameter. The purpose of this method is 
+    to plot a line graph based on the year and collection type selected by the user in the Graphical
+    User Interface. It returns an analysis_dict dictionary
+    '''
     def data_analysis(self,collection_type):
         print("level1")
         analysis_dict = {}
+        #If the collection type selected by the user in GUI is traffic volume
         if(collection_type == "traffic_volume"):
             
             # running for year 2016
-            #for x in db.traffic_volume.aggregate( [ {'$match': {"year_vol": "2016"}},{ '$group' : { '_id' : "$year_vol","max_vol": { '$max' : "$volume" } } } ] ):
-                #analysis_list.append((list(x.values())[1]))
             max_val = 0
             for x in db.traffic_volume.aggregate([{ '$match': {"year_vol": "2016"}},{'$group' : {'_id': "$volume"}}]):
-                #print(list(x.values())[0])
+                #Type-casting to integer
                 if ((int)(list(x.values())[0])) > max_val:
                     max_val = ((int)(list(x.values())[0]))   
             analysis_dict["2016"] = max_val
@@ -98,7 +119,6 @@ class DbManagerNew():
             # running for year 2017
             max_val = 0
             for x in db.traffic_volume.aggregate([{ '$match': {"year": "2017"}},{'$group' : {'_id': "$volume"}}]):
-                #print(list(x.values())[0])
                 if ((int)(list(x.values())[0])) > max_val:
                     max_val = ((int)(list(x.values())[0]))   
             analysis_dict["2017"] = max_val
@@ -106,11 +126,11 @@ class DbManagerNew():
             # running for year 2018
             max_val = 0
             for x in db.traffic_volume.aggregate([{ '$match': {"YEAR": "2018"}},{'$group' : {'_id': "$VOLUME"}}]):
-                #print(list(x.values())[0])
                 if ((int)(list(x.values())[0])) > max_val:
                     max_val = ((int)(list(x.values())[0]))   
             analysis_dict["2018"] = max_val
 
+        #If the collection type selected by the user in GUI is traffic incidents
         elif(collection_type == "traffic_incidents"):
             for year in range (2016, 2019, 1):
                 res = []
@@ -119,21 +139,12 @@ class DbManagerNew():
                 analysis_dict[year] = (len(res))
             print(analysis_dict)
 
-            # # code for max incidents in a year
-            # for year in range (2016, 2019, 1):
-            #     res = []
-            #     print("llevel3")
-            #     for x in db.traffic_incidents.aggregate( [ {'$match': {"START_DT": {'$regex': str(year)}}},{ '$group' : { '_id' : "$INCIDENT INFO", "count": { '$sum': 1 }} } ] ):
-            #         res.append(list(x.values())[1])
-            #         #analysis_list.append(list(x.values())[1])
-            #     analysis_dict[year] = (max(res))
-            # print(analysis_dict)
-            #         #max_value.append(x)
-            # 
-
-
         return analysis_dict
-
+    
+    '''
+    find_coordinates() method is used for displaying the map as an HTML file. It takes in 
+    collection_type and year as parameters. This method calls the data_analysis method
+    '''
     def find_coordinates(self, collection_type, year):
         analysis_dict = self.data_analysis(collection_type)
         ls_loc = []
@@ -143,6 +154,7 @@ class DbManagerNew():
         final_list=[]
         max_value = 0
         
+        #If the collection type selected by the user in the GUI is traffic volume
         if(collection_type == "traffic_volume"):
             if(year == "2016"):
                 max_value = list(analysis_dict.values())[0]
@@ -150,16 +162,12 @@ class DbManagerNew():
                 for x in db.traffic_volume.find({ "volume": str(max_value), "year_vol": "2016" } ):
                     print("I am here")
                     ls_loc.append(x)
-                #print(ls_loc)
                 for ls in ls_loc:
                     loc_param.append(ls['the_geom'])
-                #print(loc_param)
                 for i in range(len(loc_param)):
                     loc1 = (loc_param[i].replace("MULTILINESTRING ((","").split(',')[0]).split()
-                    #loc2 = (loc_param[1].replace("MULTILINESTRING ((","").split(',')[0]).split()
                     longitude_list.append(loc1[0]) #longitude
                     latitude_list.append(loc1[1]) #latitude
-                    #print("i: ",i)
 
             if(year == "2017"):
                 max_value = list(analysis_dict.values())[1]
@@ -167,31 +175,26 @@ class DbManagerNew():
                 for x in db.traffic_volume.find({ "volume": str(max_value), "year": "2017" } ):
                     print("I am here")
                     ls_loc.append(x)
-                #print(ls_loc)
                 for ls in ls_loc:
                     loc_param.append(ls['the_geom'])
-                #print(loc_param)
                 for i in range(len(loc_param)):
                     loc1 = (loc_param[i].replace("MULTILINESTRING ((","").split(',')[0]).split()
-                    #loc2 = (loc_param[1].replace("MULTILINESTRING ((","").split(',')[0]).split()
                     longitude_list.append(loc1[0]) #longitude
                     latitude_list.append(loc1[1]) #latitude
                     
             if(year == "2018"):
                 max_value = list(analysis_dict.values())[2]
-                #print(max_value)
                 for x in db.traffic_volume.find({ "VOLUME": str(max_value), "YEAR": "2018" } ):
                     print("I am here")
                     ls_loc.append(x)
-                #print(ls_loc)
                 for ls in ls_loc:
                     loc_param.append(ls['multilinestring'])
-                #print(loc_param)
                 for i in range(len(loc_param)):
                     loc1 = (loc_param[i].replace("MULTILINESTRING ((","").split(',')[0]).split()
                     longitude_list.append(loc1[0]) #longitude
                     latitude_list.append(loc1[1]) #latitude
 
+        #If the collection type selected by the user in the GUI is traffic incidents.
         if(collection_type == "traffic_incidents"):
             print("inside traffic_incidents analysis part")
 
@@ -216,42 +219,32 @@ class DbManagerNew():
                 max_value = list(analysis_dict.values())[2]
                 print("max_value",max_value)
 
+            #loc_param is defined a set for unique values
             res = []
             loc_param = set()
             loc_identity = ""
-            
-            
 
             for x in db.traffic_incidents.aggregate( [ {'$match': {"START_DT": {'$regex': str(year)}}},{ '$group' : { '_id' : "$INCIDENT INFO", "count": { '$sum': 1 }} } ] ):
-                #res.append(list(x.values())[1])
                 res.append(x)
-
-            #print(res)
             for i in res:
                 if((list(i.values())[1]) == max_value):
                     loc_identity = (list(i.values()))[0]
-            #print(loc_identity)
             for x in db.traffic_incidents.find({ "INCIDENT INFO": loc_identity,"START_DT": {'$regex': str(year)} } ):
                 ls_loc.append(x)
-                #print(x)
-            #print(ls_loc)
             for ls in ls_loc:
-                #loc_param.append(ls['location'])
-                #loc_param.add(ls['location'])
                 loc_param.add((ls['location']).replace("(", "").replace(")", ""))
-            #print(loc_param)
             list_new = list(loc_param)
-            #print(list_new)
             for i in range(len(list_new)):
                 loc1 = (list_new[i].split(','))
                 print(loc1)
                 longitude_list.append(loc1[1]) #longitude
-                latitude_list.append(loc1[0]) #latitude
-                #print("i: ",i)    
+                latitude_list.append(loc1[0]) #latitude    
 
+        #final list is appended with latitude_list and longitude list
         final_list.append(latitude_list)
         final_list.append(longitude_list)
         print("final_list from db manager: ",final_list)
+        #returns the final list with appended latitude and longitude coordinates
         return final_list
 
 

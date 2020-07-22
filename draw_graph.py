@@ -1,18 +1,32 @@
+'''
+@author(s) Neha Singh, Sanyam, Taruneesh Sachdeva
+
+This .py file has a class draw_graph and uses the db_manager_new class.
+'''
+
+#importing matplotlib for plotting the analysis graph
 import matplotlib 
 
 # Specifying the backend "TkAgg" to be used with Matplotlib
 matplotlib.use("TKAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+#importing DbManagerNew class
 from db_manager_new import DbManagerNew
 
-
+#importing tkinter for GUI
 import tkinter as tk
 
+'''
+draw_graph class has a method draw() which has four parameters. Using tkinter, 
+it plots the line graph as per the user selection
+'''
 class draw_graph():
     def draw(self,  win, text,  type,obj):
+        #used for deleting the graph if user wishes to plot another graph
         text.delete('1.0', tk.END)
         if(type == ""):
+            #if year or collection type is invalid
             text.insert(tk.END, "OOOps!! Please select valid type.")
         else:
             canvas = tk.Canvas(win)
@@ -24,11 +38,15 @@ class draw_graph():
             # These are subplot grid parameters encoded as a single integer.
             # For example, "221" means two wide and two tall grid
             a = f.add_subplot(221)
+            #y-axis is set to either Max Volume or Number of accidents depending on what the user selects
             if(type == "traffic_volume"):
                 a.set_ylabel('Max Volume')
+                a.set_title("Graph displaying maximum traffic volume for each year")
             elif(type == "traffic_incidents"):
                 a.set_ylabel('Number of accidents')
+                a.set_title("Graph displaying maximum incidents for each year")
 
+            #x-axis is labeled as Year
             a.set_xlabel('Year')
 
 
@@ -45,5 +63,6 @@ class draw_graph():
             # creating a canvas for the display
             canvas1 = FigureCanvasTkAgg(f, master= canvas)
             canvas1.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+            #displays in the checkbox if graph is displayed successfully
             text.insert(tk.END, "Graph is displayed successfully.")
 

@@ -1,14 +1,22 @@
+'''
+@author(s) Neha Singh, Sanyam, Taruneesh Sachdeva
+
+'''
 import pymongo
 import csv
 
-# Function to parse csv to dictionary
+'''
+function load_data() is used to parse csv to dictionary
+'''
 def load_data(filename,col_name):
     with open(filename,'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for line in csv_reader:
-            #print(line)
             col_name.insert_one(line)
 
+'''
+main() method
+'''
 if __name__ == "__main__":
     client = pymongo.MongoClient("mongodb+srv://db_user1:lX7UMVmXXoypDNPK@cluster0.wzbtd.mongodb.net/admin?retryWrites=true&w=majority")
     db = client["calgary_traffic"]
@@ -23,8 +31,6 @@ if __name__ == "__main__":
     vol_file_list = [f1,f2, f3]
     incidents_file_list = [f4, f5, f6]
     
-    #collection_name  = db["traffic_incidents", { collation: { locale: 'en_US', strength: 2 } }]
-    
     print(client.list_database_names())
     print(db.list_collection_names())
 
@@ -35,8 +41,3 @@ if __name__ == "__main__":
     for file in incidents_file_list:
         load_data(file,db.traffic_incidents)
         print("nice")
-
-    # Removes the specified collection from the database.
-    #db.col_name.drop()    
-    # 	Deletes documents from a collection.
-    #db.traffic_volume.remove()

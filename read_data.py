@@ -1,18 +1,27 @@
+'''
+@author(s) Neha Singh, Sanyam, Taruneesh Sachdeva
+
+This .py file has a class read_data and uses the db_manager_new class.
+'''
+#importing tkinter for GUI
 from tkinter import *
 import tkinter as tk
+#importing DbManagerNew class
 from db_manager_new import DbManagerNew
 
-
+'''
+class read_data has a read() method which displays the rows of data in the GUI.
+'''
 class read_data():
     def read(self, win,text, year, type,obj):
         text.delete('1.0', tk.END) #clears sattus
 
+        #If the user selection is not valid
         if((year == 0) or (type == "")):
             text.insert(tk.END, "OOOps!! Please select valid type and year.")
         else:
             print("I am reading, year, type")
             list1 = obj.ret_data(type, year)
-
 
             total_rows = len(list1)
             header = list(list1[0].keys())
@@ -23,16 +32,16 @@ class read_data():
 
             # printing header
             for i in range(1,len(header)):
-                self.e = Entry(canvas, width=25, fg='blue', font=('Arial', 10))
+                self.e = Entry(canvas, fg='blue', font=('Arial', 8,'bold'))
                 self.e.grid(row=0, column=i-1)
                 self.e.insert(END, header[i])
 
             # code for creating table
             for i in range(total_rows):
                 for j in range(1, total_columns):
-                    self.e = Entry(canvas, width=25, fg='blue',font=('Arial', 10))
+                    self.e = Entry(canvas, fg='black',font=('Arial', 8))
                     self.e.grid(row=i+1, column=j-1)
                     self.e.insert(END, list(list1[i].values())[j])
-
+            #displays in the checkbox if data is loaded successfully
             text.insert(tk.END, "Data is loaded successfully.")
 

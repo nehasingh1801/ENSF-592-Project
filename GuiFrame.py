@@ -1,10 +1,16 @@
+'''
+@author(s) Neha Singh, Sanyam, Taruneesh Sachdeva
+'''
+#importing tkinter for GUI
 import tkinter as tk
 from tkinter import ttk
+#importing the draw_graph class
 from draw_graph import draw_graph
+#importing the DbManagerNew class
 from db_manager_new import DbManagerNew
 import pymongo
 import csv
-
+#importing matplotlib for graph
 import matplotlib
 
 # Specifying the backend "TkAgg" to be used with Matplotlib
@@ -59,8 +65,8 @@ class GuiFrame():
         # window.title('Data Analysis')
 
         # setting row and column configurations
-        window.rowconfigure(0, minsize=500, weight=1)
-        window.columnconfigure(1, minsize=500, weight=1)
+        window.rowconfigure(0, minsize=700, weight=1)
+        window.columnconfigure(1, minsize=1000, weight=1)
 
         # creating a frame to add all the buttons
         fr_buttons = tk.Frame(window)
@@ -131,7 +137,7 @@ class GuiFrame():
         # waits for the user input.
         window.mainloop()
 
-
+#main() method
 if __name__ == '__main__':
 
     fr = GuiFrame()
