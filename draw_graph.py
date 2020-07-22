@@ -4,33 +4,32 @@
 This .py file has a class draw_graph and uses the db_manager_new class.
 '''
 
-#importing matplotlib for plotting the analysis graph
 import matplotlib 
 
 # Specifying the backend "TkAgg" to be used with Matplotlib
 matplotlib.use("TKAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-#importing DbManagerNew class
 from db_manager_new import DbManagerNew
 
-#importing tkinter for GUI
 import tkinter as tk
 
-'''
-draw_graph class has a method draw() which has four parameters. Using tkinter, 
-it plots the line graph as per the user selection
-'''
+
 class draw_graph():
+    '''draw_graph displays the data as line graph for specified type for years 2016-2017-2018.
+    '''
     def draw(self,  win, text,  type,obj):
-        #used for deleting the graph if user wishes to plot another graph
+
+        # clears the displayed status text
         text.delete('1.0', tk.END)
+
+        #if year or collection type is invalid
         if(type == ""):
-            #if year or collection type is invalid
-            text.insert(tk.END, "OOOps!! Please select valid type.")
+            text.insert(tk.END, "Please select valid type.")
         else:
             canvas = tk.Canvas(win)
             canvas.grid(row=0, column=1, sticky="nsew")
+
             # creating an instance of Figure and setting its size
             # dpi - dots per inches (determines pixels)
             f = Figure(figsize=(5, 5), dpi=100)
@@ -38,7 +37,8 @@ class draw_graph():
             # These are subplot grid parameters encoded as a single integer.
             # For example, "221" means two wide and two tall grid
             a = f.add_subplot(221)
-            #y-axis is set to either Max Volume or Number of accidents depending on what the user selects
+
+            # labeling x,y axis
             if(type == "traffic_volume"):
                 a.set_ylabel('Max Volume')
                 a.set_title("Graph displaying maximum traffic volume for each year")
@@ -46,23 +46,21 @@ class draw_graph():
                 a.set_ylabel('Number of accidents')
                 a.set_title("Graph displaying maximum incidents for each year")
 
-            #x-axis is labeled as Year
             a.set_xlabel('Year')
 
 
             # calling data_analysis method
-            print("type: ", type)
+            # returns the max volume and incidents for 2018, 2017, 2016
             analysis_dict = obj.data_analysis(type)
-            print("analysis_dict: ",analysis_dict)
             year_list = list(analysis_dict.keys())
-            print("year_list: ",year_list)
             data_list = list(analysis_dict.values())
-            print("data_list: ",data_list)
+
             a.plot(year_list, data_list)
 
             # creating a canvas for the display
             canvas1 = FigureCanvasTkAgg(f, master= canvas)
             canvas1.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-            #displays in the checkbox if graph is displayed successfully
+
+            #updates the status text
             text.insert(tk.END, "Graph is displayed successfully.")
 

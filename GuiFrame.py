@@ -1,31 +1,26 @@
 '''
 @author(s) Neha Singh, Sanyam, Taruneesh Sachdeva
 '''
-#importing tkinter for GUI
 import tkinter as tk
 from tkinter import ttk
-#importing the draw_graph class
 from draw_graph import draw_graph
-#importing the DbManagerNew class
 from db_manager_new import DbManagerNew
 import pymongo
 import csv
-#importing matplotlib for graph
 import matplotlib
 
-# Specifying the backend "TkAgg" to be used with Matplotlib
 from draw_map import draw_map
 from read_data import read_data
 from sort_data import sort_data
 
+# Specifying the backend "TkAgg" to be used with Matplotlib
 matplotlib.use("TKAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 
 class GuiFrame():
-    '''
-    GuiFrame implements the main frame of the Gui.
+    '''GuiFrame implements the main frame of the Gui to display data based on selections made by the user.
     '''
     global db_manager
     global yr
@@ -34,20 +29,19 @@ class GuiFrame():
     yr = 0
     tp = ""
 
-    # map_event is called when the sort button is presses
+    # map_event is called when the sort button is pressed
     def map_event(self, event):
         print("Map is displayed")
 
-    # comboFunc is called when the user adds the value
+    # comboFunc is called when the user selects type
     def comboFunc(self,event):
         global tp
         if comboType.get() == "Accident":
             tp = "traffic_incidents"
         elif comboType.get() == "Traffic Volume":
             tp = "traffic_volume"
-        #tp = type
 
-    # comboFunc is called when the user adds the value
+    # comboFuncYr is called when the user selects year
     def comboFuncYr(self, event):
         global yr 
         if (comboYear.get()) == "2016":
@@ -56,13 +50,8 @@ class GuiFrame():
             yr = "2017"
         else:
             yr = "2018"
-        #yr = year
 
     def drawFrame(self, window):
-
-        # creating an instance of Tkinter's Tk class
-        # window = tk.Tk()
-        # window.title('Data Analysis')
 
         # setting row and column configurations
         window.rowconfigure(0, minsize=700, weight=1)
@@ -117,32 +106,37 @@ class GuiFrame():
         canvas = tk.Canvas(window)
         canvas.grid(row=0, column=1, sticky="nsew")
 
+        # calls the read method of read_data class when Read button is pressed
         readButton.bind("<Button-1>", lambda event: read_data.read(event, win = window, text = statusText,
                                                                        year = yr, type = tp, obj = db_manager))
+        # calls the sort method of sort_data class when Sort button is pressed
         sortButton.bind("<Button-1>", lambda event: sort_data.sort(event, win = window, text = statusText,
                                                                        year = yr, type = tp, obj = db_manager))
+        # calls the draw method of draw_map class when Map button is pressed
         mapButton.bind("<Button-1>", lambda event: draw_map.draw(event, year = yr, type = tp,
                                                                  text = statusText, win = window, obj = db_manager))
-
+        # calls the draw method of draw_graph class when Analyse button is pressed
         analyseButton.bind("<Button-1>", lambda event: draw_graph.draw(event,  win = window,
                                                                        text = statusText,  type = tp, obj = db_manager))
 
-        # It binds the virtual event <<ComboboxSelected>> with the callback function.
-        # comboFunc is the function which will be called when new element is selected
+        # comboFunc and comboFuncYr function are called when user selects the type and year
         comboType.bind("<<ComboboxSelected>>", self.comboFunc)
         comboYear.bind("<<ComboboxSelected>>", self.comboFuncYr)
-
 
         # Event driven Programming. Continuously run the code and
         # waits for the user input.
         window.mainloop()
 
-#main() method
 if __name__ == '__main__':
 
+    # creates an object of class GuiFrame
     fr = GuiFrame()
+
+    # creating an instance of Tkinter's Tk class
     window = tk.Tk()
+
     window.title('Data Analysis')
+
     #global db_manager
     fr.drawFrame(window)
 
