@@ -29,10 +29,6 @@ class GuiFrame():
     yr = 0
     tp = ""
 
-    # map_event is called when the sort button is pressed
-    def map_event(self, event):
-        print("Map is displayed")
-
     # comboFunc is called when the user selects type
     def comboFunc(self,event):
         global tp
