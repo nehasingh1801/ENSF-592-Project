@@ -76,17 +76,22 @@ class DbManagerNew():
             new_res = [] 
 
             for x in db.traffic_incidents.aggregate( [ {'$match': {"START_DT": {'$regex': str(year)}}},{ '$group' : { '_id' : "$INCIDENT INFO", "count": { '$sum': 1 }} } ] ):
-                #res.append(list(x.values())[1])
+                # res is the list of dictionaries
+                # each dictionay includes the section names along with its count 
                 res.append(x)
 
-            #sorts the data in descending order
+            #sorts the res in descending order based on the count
             new_res = sorted(res, key = lambda i: i['count'], reverse=True)
             num = 0
             for i in new_res:
                 if(num == 10):
                     break
+                    
+                # key takes the section name for particular iteration
                 key = list(i.values())[0]
                 num +=1
+                
+                # data with the section name equal to key is appended to the response list
                 for x in db.traffic_incidents.find({"INCIDENT INFO": key ,"MODIFIED_DT": {'$regex': str(year)} }):
                     response.append(x)
 
@@ -100,37 +105,49 @@ class DbManagerNew():
         User Interface. It returns an analysis_dict dictionary
         '''
         analysis_dict = {}
+        
         #If the collection type selected by the user in GUI is traffic volume
         if(collection_type == "traffic_volume"):
             
             # running for year 2016
             max_val = 0
-            for x in db.traffic_volume.aggregate([{ '$match': {"year_vol": "2016"}},{'$group' : {'_id': "$volume"}}]):
-                #Type-casting to integer
+            
+            # for year 2016, grouping the values based on volume
+            for x in db.traffic_volume.aggregate([{ '$match': {"year_vol": "2016"}},{'$group' : {'_id': "$volume"}}]): 
+                #Accessing the volume data and type-casting it to integer to get the maximum value
                 if ((int)(list(x.values())[0])) > max_val:
-                    max_val = ((int)(list(x.values())[0]))   
+                    max_val = ((int)(list(x.values())[0]))
+            # adding max value for 2016 to dictioanry
             analysis_dict["2016"] = max_val
-
-            # running for year 2017
+            
             max_val = 0
+            # for year 2016, grouping the values based on volume
             for x in db.traffic_volume.aggregate([{ '$match': {"year": "2017"}},{'$group' : {'_id': "$volume"}}]):
+                #Accessing the volume data and type-casting it to integer to get the maximum value
                 if ((int)(list(x.values())[0])) > max_val:
-                    max_val = ((int)(list(x.values())[0]))   
+                    max_val = ((int)(list(x.values())[0]))
+            # adding max value for 2017 to dictioanry
             analysis_dict["2017"] = max_val
-
-            # running for year 2018
+            
             max_val = 0
+            # for year 2018, grouping the values based on volume
             for x in db.traffic_volume.aggregate([{ '$match': {"YEAR": "2018"}},{'$group' : {'_id': "$VOLUME"}}]):
+                #Accessing the volume data and type-casting it to integer to get the maximum value
                 if ((int)(list(x.values())[0])) > max_val:
-                    max_val = ((int)(list(x.values())[0]))   
+                    max_val = ((int)(list(x.values())[0]))
+             # adding max value for 2018 to dictioanry     
             analysis_dict["2018"] = max_val
 
         #If the collection type selected by the user in GUI is traffic incidents
         elif(collection_type == "traffic_incidents"):
+            # the loop iterates for year 2016-2017-2018
             for yr in range (2016, 2019, 1):
                 res = []
+                # for each year, grouping the data based on the count of the incident info
                 for x in db.traffic_incidents.aggregate( [ {'$match': {"START_DT": {'$regex': str(yr)}}},{ '$group' : { '_id' : "$INCIDENT INFO", "count": { '$sum': 1 }} } ] ):
+                    # appending the count for each section to the list
                     res.append(list(x.values())[1])
+                # getting the maimum count for each year
                 analysis_dict[yr] = (max(res))
                                       
         return analysis_dict
