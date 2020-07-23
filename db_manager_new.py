@@ -55,9 +55,14 @@ class DbManagerNew():
         with n rows and sorting the data in descending order i.e. highest -> lowest
         '''
         response = []
+        
         #If the collection type selected by the user in the GUI is traffic volume.
+        # for each year sorting the data based on volume using collation
+        # numericOrdering tells to sort the string data based on their numeric value
+        
         if(collection_type == "traffic_volume"):
             if(year == "2016"):
+                
                 for x in db.traffic_volume.find({"year_vol": "2016" }).sort([("volume", -1)]).collation({"locale": "en_US", "numericOrdering": True}):
                     response.append(x)
 
