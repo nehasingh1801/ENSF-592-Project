@@ -34,6 +34,7 @@ class read_data():
                 self.e = Entry(canvas, fg='black', font=('Arial', 8,'bold'))
                 self.e.grid(row=0, column=i-1)
                 self.e.insert(END, header[i])
+                self.e.config(state = 'readonly')
 
             # code for creating table
             for i in range(total_rows):
@@ -41,6 +42,8 @@ class read_data():
                     self.e = Entry(canvas, fg='black',font=('Arial', 8))
                     self.e.grid(row=i+1, column=j-1)
                     self.e.insert(END, list(list1[i].values())[j])
+                    self.e.config(state = 'readonly')
+                    
             # displays in the checkbox if data is loaded successfully
             text.insert(tk.END, "Data is loaded successfully.")
 
