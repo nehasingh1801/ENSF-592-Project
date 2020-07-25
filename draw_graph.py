@@ -1,7 +1,7 @@
 '''
 @author(s) Neha Singh, Sanyam, Taruneesh Sachdeva
 
-This .py file has a class draw_graph and uses the db_manager_new class.
+This .py file has a class draw_graph and uses the db_manager_new class .
 '''
 
 import matplotlib 
