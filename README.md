@@ -3,7 +3,7 @@ This project involved:
 
 1. Data Preparation
 
-  a. Cleaning
+  - Cleaning
   
   b. Merging
   
