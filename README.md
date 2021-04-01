@@ -5,11 +5,11 @@ This project involved:
 
   - Cleaning
   
-  b. Merging
+  - Merging
   
 2. Data Aggregation
 
-  a. Analysing a specific group of data
+  - Analysing a specific group of data
   
 3. Visualization
 
@@ -19,28 +19,28 @@ All data provided is based on https://data.calgary.ca/browse.
 Focused features:
 
 1. Road Features
-
+  
   1.1. Road Speed
   
-    a. https://data.calgary.ca/Health-and-Safety/Speed-Limits-Map/rbfp-3tic
+    - https://data.calgary.ca/Health-and-Safety/Speed-Limits-Map/rbfp-3tic
     
   1.2. Average Traffic Volume
   
-    a. 2018 (Traffic_Volumes_for_2018.csv)
+    - 2018 (Traffic_Volumes_for_2018.csv)
     
   1.3. Road Signals
   
-    a. Traffic Signals (Traffic_Signals.csv)
+    - Traffic Signals (Traffic_Signals.csv)
     
-    b. Traffic Signs (Traffic_Signs.csv)
+    - Traffic Signs (Traffic_Signs.csv)
     
-    c. Traffic cameras (Traffic_Camera_Locations.csv)
+    - Traffic cameras (Traffic_Camera_Locations.csv)
     
 2. Weather Features
 
-  a. Temperature
+  - Temperature
   
-  b. Visibility
+  - Visibility
   
 For each grid in Calgary map, following features are calculated for year 2018:
 
@@ -56,9 +56,9 @@ For each grid in Calgary map, following features are calculated for year 2018:
 
 ● Daily Weather Condition
 
-  ○ Temperature
+  - Temperature
   
-  ○ Visibility
+  - Visibility
   
 ● Target: Average number of Traffic accidents
 
